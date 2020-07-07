@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
   spdlog::info("The camera was succefully open!");
 
   if (verbose) {
-    cv::namedWindow("output", CV_WINDOW_AUTOSIZE);
+    cv::namedWindow("output", cv::WINDOW_AUTOSIZE);
   }
 
   do {
