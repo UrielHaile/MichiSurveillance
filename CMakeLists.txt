@@ -25,7 +25,7 @@ find_package(spdlog REQUIRED)
 find_package(Boost REQUIRED COMPONENTS program_options)
 
 ## Darknet
-find_package(Darknet REQUIRED)
+find_package(Darknet QUIET)
 
 ## pub_camera
 add_executable (pub_camera src/pub_camera.cpp)

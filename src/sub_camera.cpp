@@ -18,12 +18,16 @@ int main(int argc, char **argv) {
   bool verbose = false;
   std::string cfg_filename;
   std::string weights_filename;
+  std::string ip_str = "127.0.0.1";
+  std::string port_str = "5555"; 
 
   po::options_description desc("Options");
   desc.add_options()("help,h", "print help message");
-  desc.add_options()("verbose,v", po::value<bool>(&verbose)->default_value(verbose), "Shows camera view");
+  desc.add_options()("verbose,v", "Shows camera view");
   desc.add_options()("weights,w", po::value<std::string>(&weights_filename), "Weights file");
   desc.add_options()("cfg,c", po::value<std::string>(&cfg_filename), "Configuration file");
+  desc.add_options()("ip,i", po::value<std::string>(&ip_str)->default_value(ip_str), "Hostname or IP");
+  desc.add_options()("port,p", po::value<std::string>(&port_str)->default_value(port_str), "Port number");
 
   po::variables_map variables_map;
   po::store(po::parse_command_line(argc, argv, desc), variables_map);
@@ -34,6 +38,10 @@ int main(int argc, char **argv) {
     std::cout << desc << std::endl;
     exit(0);
   } else 
+
+  if (variables_map.count("verbose")) {
+    verbose = true; 
+  }
 
   if (variables_map.count("weights")) {
     spdlog::info("Weights file: {0}", weights_filename);
@@ -56,7 +64,7 @@ int main(int argc, char **argv) {
   zmq::context_t context(1);
   zmq::socket_t subscriber(context, ZMQ_SUB);
   // ToDo: set this value from the console arguments
-  subscriber.connect("tcp://192.168.0.11:5555");
+  subscriber.connect("tcp://192.168.0.14:5555");
 
   subscriber.setsockopt(ZMQ_SUBSCRIBE, nullptr, 0);
   if (verbose) {

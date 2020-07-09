@@ -15,12 +15,16 @@ namespace po = boost::program_options;
 int main(int argc, char **argv) {
   int camera_index = 0;
   bool verbose = false;
+  std::string ip_str = "127.0.0.1";
+  std::string port_str = "5555"; 
 
   po::options_description desc("Options");
   desc.add_options()("help,h", "print help message");
+  desc.add_options()("verbose,v", "Shows camera view");
   desc.add_options()("camera_index,c", po::value<int>(&camera_index)->default_value(camera_index),
-                     "Sets the camera index - default is false");
-  desc.add_options()("verbose,v", po::value<bool>(&verbose)->default_value(verbose), "Shows camera view");
+                     "Camera index - default is false");
+  desc.add_options()("ip,i", po::value<std::string>(&ip_str)->default_value(ip_str), "Hostname or IP");
+  desc.add_options()("port,p", po::value<std::string>(&port_str)->default_value(port_str), "Port number");
 
   po::variables_map variables_map;
   po::store(po::parse_command_line(argc, argv, desc), variables_map);
@@ -31,10 +35,13 @@ int main(int argc, char **argv) {
     std::cout << desc << std::endl;
   }
 
+  if (variables_map.count("verbose")) {
+    verbose = true; 
+  }
+
   zmq::context_t context(1);
   zmq::socket_t publisher(context, ZMQ_PUB);
-  // ToDo: set this value from the console arguments
-  publisher.bind("tcp://192.168.0.11:5555");
+  publisher.bind("tcp://" + ip_str + ":" + port_str);
 
   cv::VideoCapture capture(camera_index);
   if (!capture.isOpened()) {
